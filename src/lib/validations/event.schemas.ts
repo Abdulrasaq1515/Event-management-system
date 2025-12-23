@@ -62,18 +62,24 @@ export const createEventSchema = z.object({
   startDateTime: z.string().refine((val) => {
     // Accept datetime-local format (YYYY-MM-DDTHH:mm) and convert to ISO
     const dateTimeRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
+    const dateOnlyRegex = /^\d{4}-\d{2}-\d{2}$/;
     if (dateTimeRegex.test(val)) {
       return !isNaN(new Date(val + ':00.000Z').getTime());
     }
+    // Explicitly reject date-only strings like YYYY-MM-DD (require time component)
+    if (dateOnlyRegex.test(val)) return false;
     // Also accept full ISO datetime format
     return !isNaN(new Date(val).getTime());
   }, 'Invalid start date format'),
   endDateTime: z.string().refine((val) => {
     // Accept datetime-local format (YYYY-MM-DDTHH:mm) and convert to ISO
     const dateTimeRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
+    const dateOnlyRegex = /^\d{4}-\d{2}-\d{2}$/;
     if (dateTimeRegex.test(val)) {
       return !isNaN(new Date(val + ':00.000Z').getTime());
     }
+    // Explicitly reject date-only strings like YYYY-MM-DD (require time component)
+    if (dateOnlyRegex.test(val)) return false;
     // Also accept full ISO datetime format
     return !isNaN(new Date(val).getTime());
   }, 'Invalid end date format'),

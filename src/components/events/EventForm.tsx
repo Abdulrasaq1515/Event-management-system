@@ -482,7 +482,7 @@ export const EventForm: React.FC<Props> = ({
         <Button 
           type="submit" 
           variant="primary" 
-          disabled={isSubmitting || !isDirty}
+          disabled={isSubmitting}
         >
           {isSubmitting ? 'Saving...' : submitText}
         </Button>
