@@ -1,0 +1,22 @@
+# Validation Schemas Directory
+
+This directory contains comprehensive Zod validation schemas for data validation throughout the Events Management System.
+
+## Files:
+
+- `event.schemas.ts` - Event creation, update, and query validation schemas
+- `api.schemas.ts` - API request/response and pagination validation schemas  
+- `common.schemas.ts` - Reusable validation schemas for common data types
+- `index.ts` - Main export file for all validation schemas
+- `*.test.ts` - Test files for validation schemas
+
+## Features:
+
+- Complete event validation with location discrimination (physical vs virtual)
+- Date validation with business rules (end date after start date)
+- Query parameter validation with defaults and constraints
+- API response standardization schemas
+- Common field validation (email, URL, timezone, currency, etc.)
+- File upload validation
+- Web3/blockchain address validation
+- Comprehensive test coverage

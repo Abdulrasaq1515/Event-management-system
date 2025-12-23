@@ -1,0 +1,18 @@
+# Database Migrations Directory
+
+This directory will contain Drizzle ORM generated migration files.
+
+To generate migrations:
+```bash
+npm run db:generate
+```
+
+To push schema to database:
+```bash
+npm run db:push
+```
+
+To open Drizzle Studio:
+```bash
+npm run db:studio
+```
