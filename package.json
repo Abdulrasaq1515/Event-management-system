@@ -17,6 +17,7 @@
     "test:coverage": "vitest --coverage",
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
+    "db:init": "node ./scripts/init-db.js",
     "db:studio": "drizzle-kit studio",
     "type-check": "tsc --noEmit",
     "deploy": "vercel --prod",
