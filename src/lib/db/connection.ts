@@ -6,7 +6,7 @@ import * as schema from './schema';
 // Create MySQL connection pool
 const connection = mysql.createPool({
   uri: process.env.DATABASE_URL || 'mysql://root:password@localhost:3306/events_db',
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : undefined,
 });
 
 // Create the Drizzle database instance
