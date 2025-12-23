@@ -59,8 +59,24 @@ export const createEventSchema = z.object({
   excerpt: z.string()
     .max(300, 'Excerpt must be at most 300 characters')
     .optional(),
-  startDateTime: z.string().datetime('Invalid start date format'),
-  endDateTime: z.string().datetime('Invalid end date format'),
+  startDateTime: z.string().refine((val) => {
+    // Accept datetime-local format (YYYY-MM-DDTHH:mm) and convert to ISO
+    const dateTimeRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
+    if (dateTimeRegex.test(val)) {
+      return !isNaN(new Date(val + ':00.000Z').getTime());
+    }
+    // Also accept full ISO datetime format
+    return !isNaN(new Date(val).getTime());
+  }, 'Invalid start date format'),
+  endDateTime: z.string().refine((val) => {
+    // Accept datetime-local format (YYYY-MM-DDTHH:mm) and convert to ISO
+    const dateTimeRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
+    if (dateTimeRegex.test(val)) {
+      return !isNaN(new Date(val + ':00.000Z').getTime());
+    }
+    // Also accept full ISO datetime format
+    return !isNaN(new Date(val).getTime());
+  }, 'Invalid end date format'),
   timezone: z.string().min(1, 'Timezone is required'),
   location: z.discriminatedUnion('type', [physicalLocationSchema, virtualLocationSchema]),
   capacity: z.number()
@@ -70,11 +86,20 @@ export const createEventSchema = z.object({
   visibility: z.enum(['public', 'private', 'unlisted']).default('public'),
   price: eventPriceSchema.optional(),
   images: eventImagesSchema,
-  categoryId: z.string().uuid('Invalid category ID format').optional(),
+  categoryId: z.string().min(1, 'Please select a category').optional(),
   nftMetadata: nftMetadataSchema.optional(),
   metadata: z.record(z.string(), z.unknown()).default({}),
 }).refine(
-  (data) => new Date(data.endDateTime) > new Date(data.startDateTime),
+  (data) => {
+    // Convert datetime-local format to Date objects for comparison
+    const startDate = new Date(data.startDateTime.includes('T') && !data.startDateTime.includes('Z') 
+      ? data.startDateTime + ':00.000Z' 
+      : data.startDateTime);
+    const endDate = new Date(data.endDateTime.includes('T') && !data.endDateTime.includes('Z') 
+      ? data.endDateTime + ':00.000Z' 
+      : data.endDateTime);
+    return endDate > startDate;
+  },
   {
     message: 'End date must be after start date',
     path: ['endDateTime'],

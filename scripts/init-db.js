@@ -32,5 +32,6 @@ try {
   console.log('1. Make sure your Railway MySQL database is running');
   console.log('2. Check that DATABASE_URL environment variable is set correctly');
   console.log('3. Verify your database connection settings');
+  console.log('4. Make sure the database user has proper permissions');
   process.exit(1);
 }
