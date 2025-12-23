@@ -21,7 +21,8 @@ import {
   authenticateRequest,
   optionalAuth,
   requireEventAccess,
-  canAccessEvent
+  canAccessEvent,
+  extractOrganizerId
 } from '@/lib/auth';
 import type { UpdateEventRequest } from '@/types/api.types';
 
@@ -96,35 +97,19 @@ export const PUT = withErrorHandling(async (
   validateParams(resolvedParams, ['id']);
   const { id } = resolvedParams;
   
-  // Authenticate user
   // Validate request body first so clients receive validation feedback
   const validatedData = await validateRequestBody(request, updateEventSchema);
 
-  // Authenticate user
-  let user;
+  // Extract organizer ID (supports both JWT and legacy x-organizer-id header)
+  let organizerId;
   try {
-    user = authenticateRequest(request);
+    organizerId = extractOrganizerId(request);
   } catch (error) {
     return createUnauthorizedResponse();
   }
   
-  // Use the enhanced authorization system to verify event access
-  try {
-    await eventService.verifyEventAccess(id, user.userId, user.role, 'update');
-  } catch (error) {
-    if (error instanceof AppError) {
-      if (error.code === ErrorCode.NOT_FOUND) {
-        return createNotFoundResponse('Event');
-      }
-      if (error.code === ErrorCode.FORBIDDEN) {
-        return createForbiddenResponse(error.message);
-      }
-    }
-    throw error;
-  }
-  
-  // Update event using the service
-  const event = await eventService.update(id, validatedData as UpdateEventRequest, user.userId);
+  // Update event using the service (it will verify ownership internally)
+  const event = await eventService.update(id, validatedData as UpdateEventRequest, organizerId);
   
   return createSuccessResponse(event, 'Event updated successfully');
 });
@@ -148,31 +133,16 @@ export const DELETE = withErrorHandling(async (
   validateParams(resolvedParams, ['id']);
   const { id } = resolvedParams;
   
-  // Authenticate user
-  let user;
+  // Extract organizer ID (supports both JWT and legacy x-organizer-id header)
+  let organizerId;
   try {
-    user = authenticateRequest(request);
+    organizerId = extractOrganizerId(request);
   } catch (error) {
     return createUnauthorizedResponse();
   }
   
-  // Use the enhanced authorization system to verify event access
-  try {
-    await eventService.verifyEventAccess(id, user.userId, user.role, 'delete');
-  } catch (error) {
-    if (error instanceof AppError) {
-      if (error.code === ErrorCode.NOT_FOUND) {
-        return createNotFoundResponse('Event');
-      }
-      if (error.code === ErrorCode.FORBIDDEN) {
-        return createForbiddenResponse(error.message);
-      }
-    }
-    throw error;
-  }
-  
-  // Delete (archive) event using the service
-  await eventService.delete(id, user.userId);
+  // Delete (archive) event using the service (it will verify ownership internally)
+  await eventService.delete(id, organizerId);
   
   // Return 204 No Content for successful deletion
   return new Response(null, { status: 204 });

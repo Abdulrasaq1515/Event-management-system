@@ -21,7 +21,8 @@ import {
   optionalAuth,
   requireEventCreation,
   filterEventsByPermission,
-  getUserEventConstraints
+  getUserEventConstraints,
+  extractOrganizerId
 } from '@/lib/auth';
 import type { CreateEventRequest } from '@/types/api.types';
 
@@ -71,27 +72,19 @@ export const POST = withErrorHandling(async (request: NextRequest) => {
     return createErrorResponse('Rate limit exceeded', 'RATE_LIMIT_EXCEEDED', 429);
   }
 
-  // Authenticate user
   // Validate request body first so clients receive validation feedback
   const validatedData = await validateRequestBody(request, createEventSchema);
 
-  // Authenticate user
-  let user;
+  // Extract organizer ID (supports both JWT and legacy x-organizer-id header)
+  let organizerId;
   try {
-    user = authenticateRequest(request);
+    organizerId = extractOrganizerId(request);
   } catch (error) {
     return createUnauthorizedResponse();
   }
   
-  // Check if user can create events
-  try {
-    requireEventCreation(user);
-  } catch (error) {
-    return createForbiddenResponse('You do not have permission to create events');
-  }
-  
   // Create event using the service
-  const event = await eventService.create(validatedData as CreateEventRequest, user.userId);
+  const event = await eventService.create(validatedData as CreateEventRequest, organizerId);
   
   return createSuccessResponse(event, 'Event created successfully', 201);
 });
