@@ -3,7 +3,7 @@
  */
 
 import jwt from 'jsonwebtoken';
-import { authConfig } from './config';
+import { authConfig, validateJWTSecret } from './config';
 import { JWTPayload, User } from './types';
 import { AppError, ErrorCode } from '../utils/error-handler';
 
@@ -11,13 +11,15 @@ import { AppError, ErrorCode } from '../utils/error-handler';
  * Generate JWT access token
  */
 export function generateAccessToken(user: User): string {
+  const jwtSecret = validateJWTSecret();
+  
   const payload: JWTPayload = {
     userId: user.id,
     email: user.email,
     role: user.role,
   };
 
-  return jwt.sign(payload, authConfig.jwtSecret, {
+  return jwt.sign(payload, jwtSecret, {
     expiresIn: authConfig.jwtExpiresIn,
     issuer: 'events-management-system',
     audience: 'events-api',
@@ -28,13 +30,15 @@ export function generateAccessToken(user: User): string {
  * Generate JWT refresh token
  */
 export function generateRefreshToken(user: User): string {
+  const jwtSecret = validateJWTSecret();
+  
   const payload: JWTPayload = {
     userId: user.id,
     email: user.email,
     role: user.role,
   };
 
-  return jwt.sign(payload, authConfig.jwtSecret, {
+  return jwt.sign(payload, jwtSecret, {
     expiresIn: authConfig.refreshTokenExpiresIn,
     issuer: 'events-management-system',
     audience: 'events-refresh',
@@ -45,8 +49,10 @@ export function generateRefreshToken(user: User): string {
  * Verify and decode JWT token
  */
 export function verifyToken(token: string, audience: 'events-api' | 'events-refresh' = 'events-api'): JWTPayload {
+  const jwtSecret = validateJWTSecret();
+  
   try {
-    const decoded = jwt.verify(token, authConfig.jwtSecret, {
+    const decoded = jwt.verify(token, jwtSecret, {
       issuer: 'events-management-system',
       audience,
     }) as JWTPayload;

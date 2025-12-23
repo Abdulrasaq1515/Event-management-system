@@ -16,6 +16,7 @@ export type {
 // Configuration
 export { 
   authConfig, 
+  validateJWTSecret,
   AUTH_COOKIE_NAME, 
   REFRESH_COOKIE_NAME, 
   TOKEN_HEADER_NAME, 

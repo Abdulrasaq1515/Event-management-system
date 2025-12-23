@@ -10,9 +10,12 @@ export const authConfig: AuthConfig = {
   refreshTokenExpiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN || '7d',
 };
 
-// Validate required environment variables
-if (!process.env.JWT_SECRET && process.env.NODE_ENV === 'production') {
-  throw new Error('JWT_SECRET environment variable is required in production');
+// Function to validate JWT secret when needed
+export function validateJWTSecret(): string {
+  if (!process.env.JWT_SECRET && process.env.NODE_ENV === 'production') {
+    throw new Error('JWT_SECRET environment variable is required in production');
+  }
+  return authConfig.jwtSecret;
 }
 
 export const AUTH_COOKIE_NAME = 'auth-token';
