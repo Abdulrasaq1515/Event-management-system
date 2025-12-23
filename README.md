@@ -4,8 +4,8 @@ A production-ready, full-stack events management platform built with modern web 
 
 ## 🚀 Live Demo
 
-**Frontend & Backend**: [Deployed on Vercel](https://your-deployment-url.vercel.app)
-**Database**: PlanetScale MySQL
+**Frontend & Backend**: [Deployed on Railway](https://your-deployment-url.railway.app)
+**Database**: Railway MySQL
 
 ## 📋 Tech Stack
 
@@ -20,7 +20,7 @@ A production-ready, full-stack events management platform built with modern web 
 - **Next.js API Routes** - Serverless backend
 - **TypeScript** - Full-stack type safety
 - **Drizzle ORM** - Type-safe database operations
-- **MySQL (PlanetScale)** - Serverless database
+- **MySQL (Railway)** - Cloud database
 - **Zod** - Runtime type validation
 
 ### Additional Features
@@ -82,7 +82,7 @@ events-management-system/
 ### Prerequisites
 - Node.js 18+ 
 - npm or yarn
-- PlanetScale account (or MySQL database)
+- Railway account (for deployment and database)
 
 ### Environment Variables
 
@@ -201,27 +201,62 @@ npm run test:coverage
 
 ## 🚀 Deployment
 
-### Vercel Deployment (Recommended)
+### Railway Deployment (Recommended)
 
-1. **Connect to Vercel**
+1. **Create Railway Account**
+   - Go to [Railway.app](https://railway.app)
+   - Sign up with GitHub
+
+2. **Deploy from GitHub**
+   - Click "New Project" → "Deploy from GitHub repo"
+   - Select your `Event-management-system` repository
+   - Railway will automatically detect it's a Next.js app
+
+3. **Add MySQL Database**
+   - In your Railway project dashboard
+   - Click "New" → "Database" → "Add MySQL"
+   - Railway will create a MySQL instance and provide connection details
+
+4. **Configure Environment Variables**
+   - In Railway project settings → "Variables"
+   - Add these variables:
+   ```env
+   DATABASE_URL=mysql://username:password@host:port/database
+   JWT_SECRET=your-super-secret-jwt-key-here
+   NEXTAUTH_SECRET=your-nextauth-secret-key-here
+   NODE_ENV=production
+   NEXT_PUBLIC_SOLANA_RPC_URL=https://api.devnet.solana.com
+   ```
+   - Railway will auto-populate `DATABASE_URL` from your MySQL service
+
+5. **Deploy Database Schema**
+   - After deployment, run database migrations:
+   ```bash
+   # In Railway project settings, add this to deploy command or run manually
+   npm run db:push
+   ```
+
+6. **Access Your App**
+   - Railway will provide a public URL like `https://your-app.railway.app`
+
+### Alternative: Local Development with Railway Database
+
+1. **Install Railway CLI**
 ```bash
-npm install -g vercel
-vercel login
-vercel
+npm install -g @railway/cli
+railway login
 ```
 
-2. **Configure Environment Variables**
-Add all environment variables in Vercel dashboard
-
-3. **Deploy**
+2. **Link to Project**
 ```bash
-vercel --prod
+railway link
 ```
 
-### Database Setup
-1. Create PlanetScale database
-2. Add connection string to environment variables
-3. Push schema: `npm run db:push`
+3. **Get Database URL**
+```bash
+railway variables
+# Copy DATABASE_URL to your .env.local
+```
 
 ## 🎨 Design System
 
