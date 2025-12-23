@@ -19,11 +19,12 @@ function parseRailwayDatabaseUrl(url: string) {
         user: parsed.username,
         password: parsed.password,
         database: databaseName || 'railway', // Ensure database name is not empty
-        ssl: false, // Disable SSL for Railway MySQL
+        ssl: undefined, // Let Railway handle SSL automatically
         connectTimeout: 60000,
         acquireTimeout: 60000,
         timeout: 60000,
         multipleStatements: true, // Allow multiple SQL statements
+        charset: 'utf8mb4',
       };
       
       console.log('Database config:', {
@@ -34,15 +35,8 @@ function parseRailwayDatabaseUrl(url: string) {
       return config;
     }
     
-    // Fallback to direct URL
-    return { 
-      uri: url, 
-      ssl: false,
-      connectTimeout: 60000,
-      acquireTimeout: 60000,
-      timeout: 60000,
-      multipleStatements: true,
-    };
+    // If it's already a connection string, use it directly
+    return url;
   } catch (error) {
     console.error('Error parsing DATABASE_URL:', error);
     // Fallback configuration
@@ -52,7 +46,7 @@ function parseRailwayDatabaseUrl(url: string) {
       user: 'root',
       password: 'password',
       database: 'events_db',
-      ssl: false,
+      ssl: undefined,
     };
   }
 }

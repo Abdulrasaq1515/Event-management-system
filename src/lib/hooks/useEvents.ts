@@ -51,6 +51,8 @@ const eventsApi = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        // Temporary development auth - replace with proper JWT token in production
+        'x-organizer-id': 'dev-user-123',
       },
       body: JSON.stringify(data),
     });
@@ -70,6 +72,8 @@ const eventsApi = {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        // Temporary development auth - replace with proper JWT token in production
+        'x-organizer-id': 'dev-user-123',
       },
       body: JSON.stringify(data),
     });
@@ -87,6 +91,10 @@ const eventsApi = {
   deleteEvent: async (id: string): Promise<void> => {
     const response = await fetch(`/api/events/${id}`, {
       method: 'DELETE',
+      headers: {
+        // Temporary development auth - replace with proper JWT token in production
+        'x-organizer-id': 'dev-user-123',
+      },
     });
     
     if (!response.ok) {

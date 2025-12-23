@@ -30,6 +30,7 @@ export const EventForm: React.FC<Props> = ({
     handleSubmit, 
     control,
     watch,
+    setValue,
     formState: { errors, isDirty } 
   } = useForm<CreateEventInput>({
     resolver: zodResolver(createEventSchema) as any,
@@ -189,7 +190,11 @@ export const EventForm: React.FC<Props> = ({
                   type="radio"
                   value="virtual"
                   checked={locationType === 'virtual'}
-                  onChange={(e) => setLocationType(e.target.value as 'virtual')}
+                  onChange={(e) => {
+                    setLocationType(e.target.value as 'virtual');
+                    // Reset location field when switching types
+                    setValue('location', { type: 'virtual', url: '' });
+                  }}
                   className="mr-2"
                 />
                 <span className="text-slate-200">Virtual Event</span>
@@ -199,7 +204,11 @@ export const EventForm: React.FC<Props> = ({
                   type="radio"
                   value="physical"
                   checked={locationType === 'physical'}
-                  onChange={(e) => setLocationType(e.target.value as 'physical')}
+                  onChange={(e) => {
+                    setLocationType(e.target.value as 'physical');
+                    // Reset location field when switching types
+                    setValue('location', { type: 'physical', address: '', city: '', country: '' });
+                  }}
                   className="mr-2"
                 />
                 <span className="text-slate-200">Physical Location</span>
@@ -209,81 +218,87 @@ export const EventForm: React.FC<Props> = ({
 
           {/* Virtual Location Fields */}
           {locationType === 'virtual' && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="virtualUrl" className="block text-sm font-medium text-slate-200 mb-1">
-                  Meeting URL *
-                </label>
-                <input 
-                  id="virtualUrl"
-                  {...register('location.url')}
-                  className="w-full px-3 py-2 rounded-md bg-slate-800 text-slate-100 border border-slate-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                  placeholder="https://zoom.us/j/..."
-                />
-                {errors.location?.url && (
-                  <p className="text-xs text-red-400 mt-1">{errors.location.url.message}</p>
-                )}
+            <>
+              <input type="hidden" {...register('location.type')} value="virtual" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="virtualUrl" className="block text-sm font-medium text-slate-200 mb-1">
+                    Meeting URL *
+                  </label>
+                  <input 
+                    id="virtualUrl"
+                    {...register('location.url')}
+                    className="w-full px-3 py-2 rounded-md bg-slate-800 text-slate-100 border border-slate-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                    placeholder="https://zoom.us/j/..."
+                  />
+                  {errors.location?.url && (
+                    <p className="text-xs text-red-400 mt-1">{errors.location.url.message}</p>
+                  )}
+                </div>
+                <div>
+                  <label htmlFor="platform" className="block text-sm font-medium text-slate-200 mb-1">
+                    Platform
+                  </label>
+                  <input 
+                    id="platform"
+                    {...register('location.platform')}
+                    className="w-full px-3 py-2 rounded-md bg-slate-800 text-slate-100 border border-slate-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                    placeholder="Zoom, Teams, etc."
+                  />
+                </div>
               </div>
-              <div>
-                <label htmlFor="platform" className="block text-sm font-medium text-slate-200 mb-1">
-                  Platform
-                </label>
-                <input 
-                  id="platform"
-                  {...register('location.platform')}
-                  className="w-full px-3 py-2 rounded-md bg-slate-800 text-slate-100 border border-slate-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                  placeholder="Zoom, Teams, etc."
-                />
-              </div>
-            </div>
+            </>
           )}
 
           {/* Physical Location Fields */}
           {locationType === 'physical' && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="md:col-span-2">
-                <label htmlFor="address" className="block text-sm font-medium text-slate-200 mb-1">
-                  Address *
-                </label>
-                <input 
-                  id="address"
-                  {...register('location.address')}
-                  className="w-full px-3 py-2 rounded-md bg-slate-800 text-slate-100 border border-slate-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                  placeholder="123 Main St, Suite 100"
-                />
-                {errors.location?.address && (
-                  <p className="text-xs text-red-400 mt-1">{errors.location.address.message}</p>
-                )}
+            <>
+              <input type="hidden" {...register('location.type')} value="physical" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="md:col-span-2">
+                  <label htmlFor="address" className="block text-sm font-medium text-slate-200 mb-1">
+                    Address *
+                  </label>
+                  <input 
+                    id="address"
+                    {...register('location.address')}
+                    className="w-full px-3 py-2 rounded-md bg-slate-800 text-slate-100 border border-slate-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                    placeholder="123 Main St, Suite 100"
+                  />
+                  {errors.location?.address && (
+                    <p className="text-xs text-red-400 mt-1">{errors.location.address.message}</p>
+                  )}
+                </div>
+                <div>
+                  <label htmlFor="city" className="block text-sm font-medium text-slate-200 mb-1">
+                    City *
+                  </label>
+                  <input 
+                    id="city"
+                    {...register('location.city')}
+                    className="w-full px-3 py-2 rounded-md bg-slate-800 text-slate-100 border border-slate-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                    placeholder="San Francisco"
+                  />
+                  {errors.location?.city && (
+                    <p className="text-xs text-red-400 mt-1">{errors.location.city.message}</p>
+                  )}
+                </div>
+                <div>
+                  <label htmlFor="country" className="block text-sm font-medium text-slate-200 mb-1">
+                    Country *
+                  </label>
+                  <input 
+                    id="country"
+                    {...register('location.country')}
+                    className="w-full px-3 py-2 rounded-md bg-slate-800 text-slate-100 border border-slate-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                    placeholder="United States"
+                  />
+                  {errors.location?.country && (
+                    <p className="text-xs text-red-400 mt-1">{errors.location.country.message}</p>
+                  )}
+                </div>
               </div>
-              <div>
-                <label htmlFor="city" className="block text-sm font-medium text-slate-200 mb-1">
-                  City *
-                </label>
-                <input 
-                  id="city"
-                  {...register('location.city')}
-                  className="w-full px-3 py-2 rounded-md bg-slate-800 text-slate-100 border border-slate-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                  placeholder="San Francisco"
-                />
-                {errors.location?.city && (
-                  <p className="text-xs text-red-400 mt-1">{errors.location.city.message}</p>
-                )}
-              </div>
-              <div>
-                <label htmlFor="country" className="block text-sm font-medium text-slate-200 mb-1">
-                  Country *
-                </label>
-                <input 
-                  id="country"
-                  {...register('location.country')}
-                  className="w-full px-3 py-2 rounded-md bg-slate-800 text-slate-100 border border-slate-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                  placeholder="United States"
-                />
-                {errors.location?.country && (
-                  <p className="text-xs text-red-400 mt-1">{errors.location.country.message}</p>
-                )}
-              </div>
-            </div>
+            </>
           )}
         </div>
       </div>
