@@ -55,10 +55,28 @@ export default function EventsPage() {
     setFilters(prev => ({ ...prev, page }))
   }
 
-  // Calculate stats from the current data
+  // Calculate comprehensive stats from the current data
   const totalEvents = pagination?.total || 0
   const publishedEvents = events.filter(e => e.status === 'published').length
   const draftEvents = events.filter(e => e.status === 'draft').length
+  const cancelledEvents = events.filter(e => e.status === 'cancelled').length
+  const completedEvents = events.filter(e => e.status === 'completed').length
+  
+  // Calculate upcoming and ongoing events based on dates
+  const now = new Date()
+  const upcomingEvents = events.filter(e => {
+    if (!e.startDateTime) return false
+    const startDate = new Date(e.startDateTime)
+    return startDate > now && e.status === 'published'
+  }).length
+  
+  const ongoingEvents = events.filter(e => {
+    if (!e.startDateTime || !e.endDateTime) return false
+    const startDate = new Date(e.startDateTime)
+    const endDate = new Date(e.endDateTime)
+    return startDate <= now && endDate >= now && e.status === 'published'
+  }).length
+  
   const totalAttendees = events.reduce((sum, e) => sum + (e.currentAttendees || 0), 0)
 
   const breadcrumbs = [
@@ -81,28 +99,53 @@ export default function EventsPage() {
           <StatCard 
             title="Total Events" 
             value={totalEvents} 
-            delta={totalEvents > 0 ? `+${Math.round((publishedEvents / totalEvents) * 100)}%` : undefined}
+            delta={totalEvents > 0 ? `${publishedEvents} published` : undefined}
             icon="📅"
-            trend="up"
+            trend="neutral"
           />
           <StatCard 
-            title="Published Events" 
-            value={publishedEvents} 
-            delta={publishedEvents > 0 ? "+12%" : undefined}
+            title="Upcoming Events" 
+            value={upcomingEvents} 
+            delta={upcomingEvents > 0 ? `${Math.round((upcomingEvents / totalEvents) * 100)}% of total` : undefined}
             icon="🚀"
             trend="up"
           />
           <StatCard 
+            title="Ongoing Events" 
+            value={ongoingEvents} 
+            delta={ongoingEvents > 0 ? "Live now" : "None active"}
+            icon="🎯"
+            trend={ongoingEvents > 0 ? "up" : "neutral"}
+          />
+          <StatCard 
+            title="Cancelled Events" 
+            value={cancelledEvents} 
+            delta={cancelledEvents > 0 ? `${Math.round((cancelledEvents / totalEvents) * 100)}% of total` : undefined}
+            icon="❌"
+            trend={cancelledEvents > 0 ? "down" : "neutral"}
+          />
+        </div>
+
+        {/* Secondary Stats Row */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <StatCard 
             title="Draft Events" 
             value={draftEvents} 
-            delta={draftEvents > 0 ? "+5%" : undefined}
+            delta={draftEvents > 0 ? "Unpublished" : undefined}
             icon="📝"
+            trend="neutral"
+          />
+          <StatCard 
+            title="Completed Events" 
+            value={completedEvents} 
+            delta={completedEvents > 0 ? "Past events" : undefined}
+            icon="✅"
             trend="neutral"
           />
           <StatCard 
             title="Total Attendees" 
             value={totalAttendees} 
-            delta={totalAttendees > 0 ? "+24%" : undefined}
+            delta={totalAttendees > 0 ? `Avg ${Math.round(totalAttendees / (totalEvents || 1))} per event` : undefined}
             icon="👥"
             trend="up"
           />

@@ -68,12 +68,38 @@ export const categories = mysqlTable('categories', {
   nameIdx: index('idx_category_name').on(table.name),
 }));
 
+// User profiles table for user information and preferences
+export const userProfiles = mysqlTable('user_profiles', {
+  id: varchar('id', { length: 36 }).primaryKey().default(sql`(UUID())`),
+  email: varchar('email', { length: 255 }).notNull().unique(),
+  firstName: varchar('first_name', { length: 100 }).notNull(),
+  lastName: varchar('last_name', { length: 100 }).notNull(),
+  displayName: varchar('display_name', { length: 200 }).notNull(),
+  profilePicture: varchar('profile_picture', { length: 500 }),
+  role: mysqlEnum('role', ['organizer', 'admin', 'user']).default('organizer'),
+  bio: text('bio'),
+  organization: varchar('organization', { length: 200 }),
+  website: varchar('website', { length: 500 }),
+  socialLinks: json('social_links'),
+  preferences: json('preferences').notNull().default(sql`(JSON_OBJECT('emailNotifications', true, 'theme', 'system', 'timezone', 'UTC', 'language', 'en'))`),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow().onUpdateNow(),
+  lastLoginAt: timestamp('last_login_at'),
+}, (table) => ({
+  emailIdx: index('idx_email').on(table.email),
+  roleIdx: index('idx_role').on(table.role),
+  displayNameIdx: index('idx_display_name').on(table.displayName),
+}));
+
 // Type exports for use in services and API routes
 export type Event = typeof events.$inferSelect;
 export type NewEvent = typeof events.$inferInsert;
 export type Category = typeof categories.$inferSelect;
 export type NewCategory = typeof categories.$inferInsert;
+export type UserProfile = typeof userProfiles.$inferSelect;
+export type NewUserProfile = typeof userProfiles.$inferInsert;
 
 // Event status and visibility types
 export type EventStatus = Event['status'];
 export type EventVisibility = Event['visibility'];
+export type UserRole = UserProfile['role'];

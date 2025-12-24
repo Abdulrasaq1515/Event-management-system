@@ -351,6 +351,77 @@ export default function EventDetailPage({ params }: Props) {
                 </div>
               )}
             </Card>
+
+            {/* Ticket Collections - Placeholder */}
+            <Card className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold text-slate-100">Ticket Collections</h2>
+                <Button variant="primary" size="sm" disabled>
+                  + Attach Collection
+                </Button>
+              </div>
+              <div className="py-12 text-center">
+                <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-3xl">🎫</span>
+                </div>
+                <h3 className="text-slate-300 font-medium mb-2">No Ticket Collection Attached</h3>
+                <p className="text-slate-500 text-sm mb-4">
+                  Attach a ticket collection to enable ticketing and sales
+                </p>
+                <div className="text-xs text-slate-600">
+                  Feature coming in Phase 2
+                </div>
+              </div>
+            </Card>
+
+            {/* Attendee List - Placeholder */}
+            <Card className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold text-slate-100">Attendees</h2>
+                <div className="flex items-center gap-2">
+                  <Button variant="ghost" size="sm" disabled>
+                    Export
+                  </Button>
+                  <Button variant="primary" size="sm" disabled>
+                    + Add Attendee
+                  </Button>
+                </div>
+              </div>
+              <div className="py-12 text-center">
+                <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-3xl">👥</span>
+                </div>
+                <h3 className="text-slate-300 font-medium mb-2">No Attendees Yet</h3>
+                <p className="text-slate-500 text-sm mb-4">
+                  Attendees will appear here once tickets are sold or registrations are received
+                </p>
+                <div className="text-xs text-slate-600">
+                  Feature coming in Phase 2
+                </div>
+              </div>
+            </Card>
+
+            {/* Promotions - Placeholder */}
+            <Card className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold text-slate-100">Promotions & Discounts</h2>
+                <Button variant="primary" size="sm" disabled>
+                  + Create Promotion
+                </Button>
+              </div>
+              <div className="py-12 text-center">
+                <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-3xl">🎁</span>
+                </div>
+                <h3 className="text-slate-300 font-medium mb-2">No Active Promotions</h3>
+                <p className="text-slate-500 text-sm mb-4">
+                  Create discount codes and promotional offers for your event
+                </p>
+                <div className="text-xs text-slate-600">
+                  Feature coming in Phase 2
+                </div>
+              </div>
+            </Card>
           </div>
 
           {/* Sidebar */}
