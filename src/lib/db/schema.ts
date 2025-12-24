@@ -10,7 +10,6 @@ import {
 } from 'drizzle-orm/mysql-core';
 import { sql } from 'drizzle-orm';
 
-// Events table with comprehensive schema and indexing
 export const events = mysqlTable('events', {
   id: varchar('id', { length: 36 }).primaryKey().default(sql`(UUID())`),
   slug: varchar('slug', { length: 200 }).notNull().unique(),
@@ -45,7 +44,6 @@ export const events = mysqlTable('events', {
   updatedAt: timestamp('updated_at').defaultNow().onUpdateNow(),
   publishedAt: timestamp('published_at'),
 }, (table) => ({
-  // Performance-optimized indexes based on common query patterns
   slugIdx: index('idx_slug').on(table.slug),
   statusStartIdx: index('idx_status_start').on(table.status, table.startDateTime),
   organizerCreatedIdx: index('idx_organizer_created').on(table.organizerId, table.createdAt),
@@ -55,20 +53,18 @@ export const events = mysqlTable('events', {
   endDateTimeIdx: index('idx_end_datetime').on(table.endDateTime),
 }));
 
-// Categories table for event organization
 export const categories = mysqlTable('categories', {
   id: varchar('id', { length: 36 }).primaryKey().default(sql`(UUID())`),
   name: varchar('name', { length: 100 }).notNull(),
   slug: varchar('slug', { length: 100 }).notNull().unique(),
-  color: varchar('color', { length: 7 }), // Hex color code
-  icon: varchar('icon', { length: 50 }), // Icon name or class
+  color: varchar('color', { length: 7 }),
+  icon: varchar('icon', { length: 50 }),
   createdAt: timestamp('created_at').defaultNow(),
 }, (table) => ({
   slugIdx: index('idx_category_slug').on(table.slug),
   nameIdx: index('idx_category_name').on(table.name),
 }));
 
-// User profiles table for user information and preferences
 export const userProfiles = mysqlTable('user_profiles', {
   id: varchar('id', { length: 36 }).primaryKey().default(sql`(UUID())`),
   email: varchar('email', { length: 255 }).notNull().unique(),
@@ -91,7 +87,6 @@ export const userProfiles = mysqlTable('user_profiles', {
   displayNameIdx: index('idx_display_name').on(table.displayName),
 }));
 
-// Type exports for use in services and API routes
 export type Event = typeof events.$inferSelect;
 export type NewEvent = typeof events.$inferInsert;
 export type Category = typeof categories.$inferSelect;
@@ -99,7 +94,6 @@ export type NewCategory = typeof categories.$inferInsert;
 export type UserProfile = typeof userProfiles.$inferSelect;
 export type NewUserProfile = typeof userProfiles.$inferInsert;
 
-// Event status and visibility types
 export type EventStatus = Event['status'];
 export type EventVisibility = Event['visibility'];
 export type UserRole = UserProfile['role'];
