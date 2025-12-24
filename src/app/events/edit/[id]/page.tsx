@@ -74,6 +74,7 @@ export default function EditEventPage({ params }: { params: Promise<{ id: string
     timezone: event.timezone,
     location: event.location,
     capacity: event.capacity || undefined,
+    status: event.status,
     visibility: event.visibility,
     price: event.price || undefined,
     images: event.images,

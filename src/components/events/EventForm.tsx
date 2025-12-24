@@ -36,6 +36,7 @@ export const EventForm: React.FC<Props> = ({
     resolver: zodResolver(createEventSchema) as any,
     defaultValues: {
       visibility: 'public',
+      status: 'draft',
       timezone: 'UTC',
       images: {
         thumbnail: 'https://via.placeholder.com/400x300',
@@ -309,7 +310,26 @@ export const EventForm: React.FC<Props> = ({
           Event Settings
         </h3>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div>
+            <label htmlFor="status" className="block text-sm font-medium text-slate-200 mb-1">
+              Status *
+            </label>
+            <select 
+              id="status" 
+              {...register('status')} 
+              className="w-full px-3 py-2 rounded-md bg-slate-800 text-slate-100 border border-slate-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            >
+              <option value="draft">Draft</option>
+              <option value="published">Published</option>
+              <option value="cancelled">Cancelled</option>
+              <option value="completed">Completed</option>
+            </select>
+            {errors.status && (
+              <p className="text-xs text-red-400 mt-1">{errors.status.message}</p>
+            )}
+          </div>
+          
           <div>
             <label htmlFor="capacity" className="block text-sm font-medium text-slate-200 mb-1">
               Capacity
