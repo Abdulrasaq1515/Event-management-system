@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react'
+import React, { useState, use } from 'react'
 import { useRouter } from 'next/navigation'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
@@ -9,10 +9,10 @@ import { useEvent, useDeleteEvent, useUpdateEvent } from '@/lib/hooks'
 import { formatDate, formatTime } from '@/lib/utils/date'
 import type { NftMetadata } from '@/lib/services/nft.service'
 
-type Props = { params: { id: string } }
+type Props = { params: Promise<{ id: string }> }
 
 export default function EventDetailPage({ params }: Props) {
-  const { id } = params
+  const { id } = use(params)
   const router = useRouter()
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [showNFTAssociation, setShowNFTAssociation] = useState(false)

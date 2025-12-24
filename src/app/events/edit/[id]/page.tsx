@@ -1,5 +1,5 @@
 "use client"
-import React from 'react'
+import React, { use } from 'react'
 import { useRouter } from 'next/navigation'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
@@ -7,8 +7,8 @@ import { EventForm } from '@/components/events/EventForm'
 import { useEvent, useUpdateEvent } from '@/lib/hooks'
 import type { UpdateEventInput } from '@/lib/validations/event.schemas'
 
-export default function EditEventPage({ params }: { params: { id: string } }) {
-  const { id } = params
+export default function EditEventPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params)
   const router = useRouter()
   
   const { data: event, isLoading, error } = useEvent(id)
