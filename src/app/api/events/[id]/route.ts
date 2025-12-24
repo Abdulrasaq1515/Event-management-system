@@ -55,6 +55,8 @@ export const GET = withErrorHandling(async (
   // Get optional authentication context
   const user = optionalAuth(request);
   
+  console.log(`🔍 GET /api/events/${id} - User:`, user ? `${user.userId} (${user.role})` : 'anonymous');
+  
   // Use the enhanced authorization system to verify event access
   try {
     const event = await eventService.verifyEventAccess(
@@ -64,8 +66,10 @@ export const GET = withErrorHandling(async (
       'read'
     );
     
+    console.log(`✅ Event access granted for ${id}`);
     return createSuccessResponse(event, 'Event retrieved successfully');
   } catch (error) {
+    console.error(`❌ Event access denied for ${id}:`, error instanceof AppError ? error.message : error);
     if (error instanceof AppError) {
       if (error.code === ErrorCode.NOT_FOUND) {
         return createNotFoundResponse('Event');

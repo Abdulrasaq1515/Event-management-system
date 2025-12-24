@@ -452,15 +452,20 @@ export class EventService {
     operation: 'read' | 'update' | 'delete' | 'publish'
   ): Promise<Event> {
     try {
+      console.log(`🔐 verifyEventAccess: eventId=${eventId}, userId=${userId}, role=${userRole}, operation=${operation}`);
+      
       const event = await this.findById(eventId);
       
       if (!event) {
+        console.log(`❌ Event ${eventId} not found in database`);
         throw new AppError(
           ErrorCode.NOT_FOUND,
           'Event not found',
           404
         );
       }
+      
+      console.log(`📄 Event found: id=${event.id}, organizerId=${event.organizerId}, status=${event.status}, visibility=${event.visibility}`);
 
       // Admin users can perform any operation on any event
       if (userRole === 'admin') {
