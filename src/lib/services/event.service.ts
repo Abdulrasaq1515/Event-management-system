@@ -503,7 +503,7 @@ export class EventService {
         }
 
         // Additional check: only organizers and admins can perform write operations
-        if (userRole !== 'organizer' && userRole !== 'admin') {
+        if (userRole === 'user') {
           throw new AppError(
             ErrorCode.FORBIDDEN,
             `Your role does not allow you to ${operation} events`,
@@ -563,33 +563,16 @@ export class EventService {
           visibility: 'public',
         };
       } else if (userRole === 'organizer') {
-        // Organizers can see their own events (all statuses) or public published events
-        if (!constrainedParams.organizerId) {
-          // If not filtering by organizer, show public events + their own events
-          // This requires a more complex query, so we'll handle it in post-processing
-        }
+        // Organizers can see their own events (all statuses)
+        // Filter by organizerId to show all their events
+        constrainedParams = {
+          ...constrainedParams,
+          organizerId: userId,
+        };
       }
       // Admin users have no constraints - they can see all events
 
       const result = await this.findMany(constrainedParams);
-
-      // Post-process results for organizers when not filtering by organizerId
-      if (userRole === 'organizer' && !constrainedParams.organizerId) {
-        const filteredEvents = result.data.filter(event => {
-          // Show public published events or events owned by the organizer
-          return (event.visibility === 'public' && event.status === 'published') ||
-                 event.organizerId === userId;
-        });
-
-        return {
-          ...result,
-          data: filteredEvents,
-          pagination: {
-            ...result.pagination,
-            total: filteredEvents.length,
-          },
-        };
-      }
 
       return result;
     } catch (error) {
