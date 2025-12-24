@@ -3,27 +3,25 @@ import mysql from 'mysql2/promise';
 import { sql } from 'drizzle-orm';
 import * as schema from './schema';
 
-// Parse Railway DATABASE_URL which might be in different formats
 function parseRailwayDatabaseUrl(url: string) {
   try {
     console.log('Parsing DATABASE_URL:', url.replace(/:[^:@]*@/, ':***@'));
     
     if (url.includes('mysql://')) {
-      // Railway format: mysql://user:password@host:port/database
       const parsed = new URL(url);
-      const databaseName = parsed.pathname.slice(1); // Remove leading slash
+      const databaseName = parsed.pathname.slice(1);
       
       const config = {
         host: parsed.hostname,
         port: parseInt(parsed.port) || 3306,
         user: parsed.username,
         password: parsed.password,
-        database: databaseName || 'railway', // Ensure database name is not empty
-        ssl: undefined, // Let Railway handle SSL automatically
+        database: databaseName || 'railway',
+        ssl: undefined,
         connectTimeout: 60000,
         acquireTimeout: 60000,
         timeout: 60000,
-        multipleStatements: true, // Allow multiple SQL statements
+        multipleStatements: true,
         charset: 'utf8mb4',
       };
       
@@ -35,11 +33,9 @@ function parseRailwayDatabaseUrl(url: string) {
       return config;
     }
     
-    // If it's already a connection string, use it directly
     return url;
   } catch (error) {
     console.error('Error parsing DATABASE_URL:', error);
-    // Fallback configuration
     return {
       host: 'localhost',
       port: 3306,
@@ -51,7 +47,6 @@ function parseRailwayDatabaseUrl(url: string) {
   }
 }
 
-// Create MySQL connection pool with Railway-compatible configuration
 const databaseUrl = process.env.DATABASE_URL || 'mysql://root:password@localhost:3306/events_db';
 const connectionConfig = parseRailwayDatabaseUrl(databaseUrl);
 
@@ -59,14 +54,11 @@ console.log('Creating MySQL connection pool...');
 
 const connection = mysql.createPool(connectionConfig);
 
-// Create the Drizzle database instance
 export const db = drizzle(connection, { schema, mode: 'default' });
 
-// Connection utility functions
 export async function testConnection(): Promise<boolean> {
   try {
     console.log('Testing database connection...');
-    // Simple query to test the connection
     await db.execute(sql`SELECT 1 as test`);
     console.log('✅ Database connection successful');
     return true;
@@ -91,5 +83,4 @@ export async function closeConnection(): Promise<void> {
   }
 }
 
-// Export the connection for direct use if needed
 export { connection };
