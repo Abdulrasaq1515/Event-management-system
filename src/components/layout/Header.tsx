@@ -24,10 +24,10 @@ export const Header: React.FC<Props> = ({ breadcrumbs = [] }) => {
   // Fallback mock user data for when profile is loading or not available
   const mockUser: UserProfile = {
     id: 'dev-user-123',
-    email: 'haley.carter@example.com',
-    firstName: 'Haley',
-    lastName: 'Carter',
-    displayName: 'Haley Carter',
+    email: 'rasaq.ajape@example.com',
+    firstName: 'Rasaq',
+    lastName: 'Ajape',
+    displayName: 'Rasaq Ajape',
     profilePicture: undefined,
     role: 'organizer',
     bio: null,

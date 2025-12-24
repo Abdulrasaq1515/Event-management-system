@@ -18,7 +18,7 @@ async function seedUser() {
     // Check if user already exists
     const [existingUsers] = await connection.execute(
       'SELECT * FROM user_profiles WHERE email = ?',
-      ['haley.carter@example.com']
+      ['rasaq.ajape@example.com']
     );
 
     if (existingUsers.length > 0) {
@@ -35,10 +35,10 @@ async function seedUser() {
       ) VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW(), NOW())`,
       [
         'dev-user-123',
-        'haley.carter@example.com',
-        'Haley',
-        'Carter',
-        'Haley Carter',
+        'rasaq.ajape@example.com',
+        'Rasaq',
+        'Ajape',
+        'Rasaq Ajape',
         'organizer',
         JSON.stringify({
           emailNotifications: true,
@@ -50,8 +50,8 @@ async function seedUser() {
     );
 
     console.log('✅ User profile created successfully');
-    console.log('📧 Email: haley.carter@example.com');
-    console.log('👤 Name: Haley Carter');
+    console.log('📧 Email: rasaq.ajape@example.com');
+    console.log('👤 Name: Rasaq Ajape');
     console.log('🔑 ID: dev-user-123');
 
   } catch (error) {
