@@ -146,11 +146,25 @@ export function withAuth<T extends unknown[]>(
 
 /**
  * Optional authentication - doesn't throw if no token provided
+ * Also supports legacy x-organizer-id header for development
  */
 export function optionalAuth(request: NextRequest): JWTPayload | null {
   try {
     return authenticateRequest(request);
   } catch {
+    // Fallback to legacy header for backward compatibility
+    const legacyOrganizerId = request.headers.get(ORGANIZER_ID_HEADER);
+    if (legacyOrganizerId) {
+      console.warn('⚠️  Using legacy x-organizer-id header in optionalAuth. Please migrate to JWT authentication.');
+      // Return a mock JWT payload for the legacy organizer ID
+      return {
+        userId: legacyOrganizerId,
+        email: `${legacyOrganizerId}@legacy.local`,
+        role: 'organizer',
+        iat: Date.now(),
+        exp: Date.now() + 86400000, // 24 hours
+      };
+    }
     return null;
   }
 }
