@@ -21,7 +21,12 @@ const eventsApi = {
       }
     });
 
-    const response = await fetch(`/api/events?${searchParams.toString()}`);
+    const response = await fetch(`/api/events?${searchParams.toString()}`, {
+      headers: {
+        // Temporary development auth - replace with proper JWT token in production
+        'x-organizer-id': 'dev-user-123',
+      },
+    });
     
     if (!response.ok) {
       const error = await response.json().catch(() => ({ error: 'Failed to fetch events' }));
@@ -34,7 +39,12 @@ const eventsApi = {
 
   // Fetch single event by ID
   getEvent: async (id: string): Promise<Event> => {
-    const response = await fetch(`/api/events/${id}`);
+    const response = await fetch(`/api/events/${id}`, {
+      headers: {
+        // Temporary development auth - replace with proper JWT token in production
+        'x-organizer-id': 'dev-user-123',
+      },
+    });
     
     if (!response.ok) {
       const error = await response.json().catch(() => ({ error: 'Failed to fetch event' }));
