@@ -89,6 +89,7 @@ export const createEventSchema = z.object({
     .int('Capacity must be an integer')
     .positive('Capacity must be a positive integer')
     .optional(),
+  status: z.enum(['draft', 'published', 'cancelled', 'completed']).default('draft'),
   visibility: z.enum(['public', 'private', 'unlisted']).default('public'),
   price: eventPriceSchema.optional(),
   images: eventImagesSchema,
